@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-windows;net9.0-windows;net8.0-windows;net471;net462</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Description>NuExt.Presentation.Wpf provides WPF-focused presentation helpers for the NuExt ecosystem: XAML resources and styles, control and framework extensions, binding/data helpers, diagnostics, and templating utilities.
+
+Commonly used types:
+Presentation.Wpf.WindowPlacement
+Presentation.Wpf.Data.BindingProxy
+Presentation.Wpf.Data.BindingProxy`1
+Presentation.Wpf.Controls.ComboBoxExtensions
+Presentation.Wpf.Controls.ControlExtensions
+Presentation.Wpf.Controls.TreeViewItemHelper
+Presentation.Wpf.Controls.VirtualizingStackPanelExtensions
+Presentation.Wpf.Templating.ComboBoxItemTemplateSelector
+Presentation.Wpf.Diagnostics.BindingErrorTraceListener
+Presentation.Wpf.FrameworkElementExtensions
+Presentation.Wpf.DependencyObjectExtensions
+Presentation.Wpf.WindowExtensions</Description>
+    <RootNamespace>Presentation.Wpf</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591;NETSDK1233</NoWarn>
+    <VersionPrefix>0.7.4</VersionPrefix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.298">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NuExt_UseLocalProjects)' != 'true'">
+    <PackageReference Include="NuExt.System" Version="0.7.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NuExt_UseLocalProjects)' == 'true'">
+    <ProjectReference Include="..\..\NuExt.System\src\NuExt.System.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" Key="0024000004800000940000000602000000240000525341310004000001000100b789a2ca53134810a04b9629da17625466eca3b89758bedfe43ebb1ed321c10eb969c265dbfe73e8fa34a63a30246654a4db84f23112d88b7f2a61573784f338af6d225b994a3ff0aa17db7faadb09edda35a28a5569a7e389fa501a23215d30987200702b22b86b36becc3780770256448a230c38bbdc0ba30fb21faeae5fbc" />
+  </ItemGroup>
+
+</Project>
