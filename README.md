@@ -3,6 +3,7 @@
 `NuExt.Presentation.Wpf` is a lightweight, **WPF-focused presentation library** providing XAML helpers, control extensions, data-binding utilities, diagnostics, and templating helpers. It enables clean, reusable presentation code across WPF applications with minimal dependencies.
 
 [![NuGet](https://img.shields.io/nuget/v/NuExt.Presentation.Wpf.svg)](https://www.nuget.org/packages/NuExt.Presentation.Wpf)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-blue)](https://deepwiki.com/nu-ext/NuExt.Presentation.Wpf)
 [![Build](https://github.com/nu-ext/NuExt.Presentation.Wpf/actions/workflows/ci.yml/badge.svg)](https://github.com/nu-ext/NuExt.Presentation.Wpf/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/nu-ext/NuExt.Presentation.Wpf?label=license)](https://github.com/nu-ext/NuExt.Presentation.Wpf/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/nuget/dt/NuExt.Presentation.Wpf.svg)](https://www.nuget.org/packages/NuExt.Presentation.Wpf)
