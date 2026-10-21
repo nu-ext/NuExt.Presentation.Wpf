@@ -11,16 +11,18 @@
 ## Highlights
 
 - **Control extensions** — `TreeViewItemHelper`, `ComboBoxExtensions`, `VirtualizingStackPanelExtensions`, `ControlExtensions` for common WPF control operations.
-- **Binding helpers** — `BindingProxy` and `BindingProxy<T>` to pass DataContext across templates and containers without direct binding paths.
+- **Binding helpers** — `BindingProxy` and `BindingProxy<T>` expose binding sources across resource dictionaries, templates, and other locations outside the normal DataContext inheritance chain.
 - **Framework extensions** — `FrameworkElementExtensions`, `DependencyObjectExtensions`, `WindowExtensions` for element and window operations.
+- **Visual and logical tree traversal** — find visual children and parents, or resolve an ancestor through the visual tree with a logical-tree fallback.
+- **Dispatcher-safe access** — read dependency properties and execute property accessors on the owning WPF dispatcher.
 - **Window placement** — `WindowPlacement` to save/restore window position, size, and state with minimal code.
-- **Diagnostics** — `BindingErrorTraceListener` to capture and display WPF binding errors in debug builds.
+- **Diagnostics** — `BindingErrorTraceListener` captures and displays WPF binding errors when data-binding tracing is enabled.
 - **Templating** — `ComboBoxItemTemplateSelector` and reusable XAML styles (TreeViewItem, etc.).
 - **Zero heavy dependencies** — only depends on `NuExt.System` and WPF framework types.
 
-### Compatibility
+## Compatibility
 
-WPF on **.NET 8/9/10** and **.NET Framework 4.6.2+**. Platform-independent usage patterns suitable for any MVVM framework.
+WPF on **.NET 8/9/10** and **.NET Framework 4.6.2+**. The library is independent of any particular MVVM framework.
 
 ## Quick Start
 
@@ -66,10 +68,10 @@ if (item != null) item.IsSelected = true;
 
 ## Why NuExt.Presentation.Wpf?
 
-- **Reusable** — proven presentation patterns you can share across projects.
-- **Minimal** — no bloat, no heavy frameworks; pure WPF and .NET goodness.
-- **Fast** — efficient extensions with careful attention to performance.
-- **Debuggable** — built-in diagnostics and clean, easy-to-follow code.
+- **Reusable** — common presentation infrastructure shared across WPF applications.
+- **Minimal** — focused APIs without an application framework or MVVM architecture dependency.
+- **Explicit** — straightforward extensions and helpers with visible WPF behavior.
+- **Debuggable** — built-in binding diagnostics and readable implementation paths.
 
 ## Installation
 

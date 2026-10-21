@@ -15,12 +15,12 @@ public static class DependencyObjectExtensions
         /// </summary>
         /// <typeparam name="T">The type of element to find.</typeparam>
         /// <returns>The first child element of a certain type, or null if no such element exists.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when the dependencyObject or name parameter is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the dependencyObject parameter is null.</exception>
         public T? FindChild<T>() where T : DependencyObject
         {
             ArgumentNullException.ThrowIfNull(dependencyObject);
 
-            int childCount = VisualTreeHelper.GetChildrenCount(dependencyObject);
+            int childCount = dependencyObject.GetVisualChildrenCount();
             for (int i = 0; i < childCount; i++)
             {
                 var child = VisualTreeHelper.GetChild(dependencyObject, i);
@@ -30,7 +30,7 @@ public static class DependencyObjectExtensions
                     return correctlyTyped;
                 }
 
-                T? descendent = FindChild<T>(child);
+                T? descendent = child.FindChild<T>();
                 if (descendent != null)
                 {
                     return descendent;
@@ -46,12 +46,13 @@ public static class DependencyObjectExtensions
         /// <param name="name">The name of the child element to find.</param>
         /// <returns>The first child element with the specified name, or null if no such element exists.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the dependencyObject or name parameter is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when the name parameter is empty.</exception>
         public FrameworkElement? FindChildByName(string name)
         {
             ArgumentNullException.ThrowIfNull(dependencyObject);
             ArgumentException.ThrowIfNullOrEmpty(name);
 
-            int childCount = VisualTreeHelper.GetChildrenCount(dependencyObject);
+            int childCount = dependencyObject.GetVisualChildrenCount();
 
             for (int i = 0; i < childCount; i++)
             {
@@ -60,7 +61,7 @@ public static class DependencyObjectExtensions
                 if (child is FrameworkElement frameworkElement && frameworkElement.Name == name)
                     return frameworkElement;
 
-                var result = FindChildByName(child, name);
+                var result = child.FindChildByName(name);
                 if (result is not null)
                     return result;
             }
@@ -78,7 +79,7 @@ public static class DependencyObjectExtensions
         {
             ArgumentNullException.ThrowIfNull(dependencyObject);
 
-            int childCount = VisualTreeHelper.GetChildrenCount(dependencyObject);
+            int childCount = dependencyObject.GetVisualChildrenCount();
             for (int i = 0; i < childCount; i++)
             {
                 DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
@@ -86,9 +87,14 @@ public static class DependencyObjectExtensions
                 if (child is T typedChild)
                     yield return typedChild;
 
-                foreach (T childOfChild in FindChildren<T>(child))
+                foreach (T childOfChild in child.FindChildren<T>())
                     yield return childOfChild;
             }
+        }
+
+        private int GetVisualChildrenCount()
+        {
+            return dependencyObject is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetChildrenCount(dependencyObject) : 0;
         }
 
         /// <summary>
@@ -104,19 +110,25 @@ public static class DependencyObjectExtensions
             var obj = dependencyObject;
             while (obj != null)
             {
-                obj = VisualTreeHelper.GetParent(obj);
+                obj = obj.GetVisualParent();
                 if (obj is T parent) return parent;
             }
             return null;
         }
 
+        /// <summary>
+        /// Finds the first ancestor of the specified type, searching the visual tree first and then the logical tree.
+        /// </summary>
+        /// <typeparam name="T">The type of ancestor to find.</typeparam>
+        /// <param name="includeSelf">Whether to test the current object before searching its ancestors.</param>
+        /// <returns>The first matching ancestor, or <see langword="null"/> if no match is found.</returns>
         public T? FindAncestor<T>(bool includeSelf = false) where T : DependencyObject
         {
             ArgumentNullException.ThrowIfNull(dependencyObject);
 
-            for (var current = includeSelf ? dependencyObject : VisualTreeHelper.GetParent(dependencyObject);
+            for (var current = includeSelf ? dependencyObject : dependencyObject.GetVisualParent();
                  current is not null;
-                 current = VisualTreeHelper.GetParent(current))
+                 current = current.GetVisualParent())
             {
                 if (current is T hit) return hit;
             }
@@ -129,6 +141,19 @@ public static class DependencyObjectExtensions
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets the visual parent of the current object.
+        /// </summary>
+        /// <returns>
+        /// The visual parent, or <see langword="null"/> if the current object is not a visual object or has no visual parent.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the dependencyObject parameter is null.</exception>
+        public DependencyObject? GetVisualParent()
+        {
+            ArgumentNullException.ThrowIfNull(dependencyObject);
+            return dependencyObject is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(dependencyObject) : null;
         }
 
         /// <summary>
