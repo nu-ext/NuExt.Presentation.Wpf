@@ -25,9 +25,10 @@ public static class TreeViewItemHelper
     {
         if (container == null) return null;
 
-        if (container.DataContext == item)
+        if (container is TreeViewItem treeViewItem &&
+            (ReferenceEquals(treeViewItem, item) || Equals(treeViewItem.Header, item)))
         {
-            return container as TreeViewItem;
+            return treeViewItem;
         }
 
         // Expand the current container
@@ -84,15 +85,11 @@ public static class TreeViewItemHelper
                 // that the container will be generated.
                 virtualizingPanel.BringIntoView(i);
 
-                subContainer =
-                    (TreeViewItem?)container.ItemContainerGenerator.
-                        ContainerFromIndex(i);
+                subContainer = (TreeViewItem?)container.ItemContainerGenerator.ContainerFromIndex(i);
             }
             else
             {
-                subContainer =
-                    (TreeViewItem?)container.ItemContainerGenerator.
-                        ContainerFromIndex(i);
+                subContainer = (TreeViewItem?)container.ItemContainerGenerator.ContainerFromIndex(i);
 
                 // Bring the item into view to maintain the
                 // same behavior as with a virtualizing panel.

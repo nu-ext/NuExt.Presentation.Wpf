@@ -51,9 +51,9 @@ public class BindingProxy<T>: Freezable where T: class
     /// <summary>
     /// Gets or sets the DataContext for this <see cref="BindingProxy{T}"/>.
     /// </summary>
-    public T DataContext
+    public T? DataContext
     {
-        get => (T)GetValue(DataContextProperty);
+        get => (T?)GetValue(DataContextProperty);
         set => SetValue(DataContextProperty, value);
     }
 

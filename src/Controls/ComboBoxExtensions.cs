@@ -64,27 +64,20 @@ public static class ComboBoxExtensions
                 // that the container will be generated.
                 virtualizingPanel.BringIntoView(i);
 
-                subContainer =
-                    (ComboBoxItem?)container.ItemContainerGenerator.
-                        ContainerFromIndex(i);
+                subContainer = (ComboBoxItem?)container.ItemContainerGenerator.ContainerFromIndex(i);
             }
             else
             {
-                subContainer =
-                    (ComboBoxItem?)container.ItemContainerGenerator.
-                        ContainerFromIndex(i);
+                subContainer = (ComboBoxItem?)container.ItemContainerGenerator.ContainerFromIndex(i);
 
                 // Bring the item into view to maintain the
                 // same behavior as with a virtualizing panel.
                 subContainer?.BringIntoView();
             }
 
-            if (subContainer != null)
+            if (subContainer != null && Equals(container.ItemContainerGenerator.ItemFromContainer(subContainer), item))
             {
-                if (subContainer.DataContext == item)
-                {
-                    return subContainer;
-                }
+                return subContainer;
             }
         }
 

@@ -8,7 +8,7 @@ namespace Presentation.Wpf.Controls;
 
 public static class VirtualizingStackPanelExtensions
 {
-    private static readonly ConcurrentDictionary<Type, MethodInfo?> s_bringIndexIntoViewMethods = new();
+    private static readonly ConcurrentDictionary<Type, MethodInfo> s_bringIndexIntoViewMethods = new();
 
     static VirtualizingStackPanelExtensions()
     {
@@ -22,11 +22,11 @@ public static class VirtualizingStackPanelExtensions
     {
         ArgumentNullException.ThrowIfNull(virtualizingPanel);
 
-        var mi = s_bringIndexIntoViewMethods.GetOrAdd(virtualizingPanel.GetType(), type => virtualizingPanel.GetType().GetMethod("BringIndexIntoView",
-            BindingFlags.NonPublic | BindingFlags.Instance));
-        Debug.Assert(mi != null);
+        var method = s_bringIndexIntoViewMethods.GetOrAdd(virtualizingPanel.GetType(),
+            static type => type.GetMethod("BringIndexIntoView", BindingFlags.NonPublic | BindingFlags.Instance)
+                           ?? throw new MissingMethodException(type.FullName, "BringIndexIntoView"));
 
         //virtualizingPanel.BringIndexIntoView(index);
-        mi?.Invoke(virtualizingPanel, [index]);//TODO to delegate
+        method.Invoke(virtualizingPanel, [index]);//TODO to delegate
     }
 }

@@ -10,15 +10,15 @@
 
 ## Highlights
 
-- **Control extensions** — `TreeViewItemHelper`, `ComboBoxExtensions`, `VirtualizingStackPanelExtensions`, `ControlExtensions` for common WPF control operations.
-- **Binding helpers** — `BindingProxy` and `BindingProxy<T>` expose binding sources across resource dictionaries, templates, and other locations outside the normal DataContext inheritance chain.
+- **Control extensions** — `TreeViewItemHelper`, `ComboBoxExtensions`, `VirtualizingStackPanelExtensions`, and `ControlExtensions` provide common WPF control operations.
+- **Binding helpers** — `BindingProxy` and `BindingProxy<T>` expose binding sources across resource dictionaries, templates, and locations outside the normal `DataContext` inheritance chain.
 - **Framework extensions** — `FrameworkElementExtensions`, `DependencyObjectExtensions`, `WindowExtensions` for element and window operations.
 - **Visual and logical tree traversal** — find visual children and parents, or resolve an ancestor through the visual tree with a logical-tree fallback.
 - **Dispatcher-safe access** — read dependency properties and execute property accessors on the owning WPF dispatcher.
 - **Window placement** — `WindowPlacement` to save/restore window position, size, and state with minimal code.
 - **Diagnostics** — `BindingErrorTraceListener` captures and displays WPF binding errors when data-binding tracing is enabled.
 - **Templating** — `ComboBoxItemTemplateSelector` and reusable XAML styles (TreeViewItem, etc.).
-- **Zero heavy dependencies** — only depends on `NuExt.System` and WPF framework types.
+- **Minimal dependencies** — depends only on `NuExt.System` and WPF framework assemblies.
 
 ## Compatibility
 
@@ -26,16 +26,20 @@ WPF on **.NET 8/9/10** and **.NET Framework 4.6.2+**. The library is independent
 
 ## Quick Start
 
-### Binding across templates with BindingProxy
+### Binding outside the DataContext inheritance chain
 
 ```xml
 <Window.Resources>
-    <local:BindingProxy x:Key="proxy" DataContext="{Binding SomeViewModel}" />
+    <local:BindingProxy x:Key="proxy" DataContext="{Binding}" />
 </Window.Resources>
 
-<Grid DataContext="{Binding Source={StaticResource proxy}, Path=DataContext}">
-    <!-- content can now access SomeViewModel directly -->
-</Grid>
+<Button Content="Actions">
+    <Button.ContextMenu>
+        <ContextMenu DataContext="{Binding Source={StaticResource proxy}, Path=DataContext}">
+            <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" />
+        </ContextMenu>
+    </Button.ContextMenu>
+</Button>
 ```
 
 ### Enable binding error diagnostics
