@@ -26,7 +26,11 @@ public static class FrameworkElementExtensions
     /// </remarks>
     public static async Task WaitLoadedAsync(this FrameworkElement element, CancellationToken cancellationToken)
     {
+#if NET7_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(element);
+#else
+        _ = element ?? throw new ArgumentNullException(nameof(element));
+#endif
 
         element.VerifyAccess();
 

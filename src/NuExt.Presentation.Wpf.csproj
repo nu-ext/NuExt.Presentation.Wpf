@@ -9,7 +9,7 @@
     <RootNamespace>Presentation.Wpf</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591;NETSDK1233</NoWarn>
-    <VersionPrefix>0.8.0</VersionPrefix>
+    <VersionPrefix>0.8.1</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,12 +19,8 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NuExt_UseLocalProjects)' != 'true'">
-    <PackageReference Include="NuExt.System" Version="0.8.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NuExt_UseLocalProjects)' == 'true'">
-    <ProjectReference Include="..\..\NuExt.System\src\NuExt.System.csproj" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'net471'">
+    <PackageReference Include="System.Text.Json" Version="10.0.14" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Interop;
+using Presentation.Wpf.Serialization;
 
 namespace Presentation.Wpf;
 
@@ -29,7 +29,11 @@ public static class WindowExtensions
     /// <exception cref="ArgumentNullException">Thrown when the window is null.</exception>
     public static void BringToFront(this Window window)
     {
+#if NET7_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(window);
+#else
+        _ = window ?? throw new ArgumentNullException(nameof(window));
+#endif
 
         if (window.WindowState == WindowState.Minimized)
         {
@@ -53,7 +57,11 @@ public static class WindowExtensions
     /// or <see langword="null"/> if the operation fails.</returns>
     public static WindowPlacement? GetPlacement(this Window window)
     {
+#if NET7_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(window);
+#else
+        _ = window ?? throw new ArgumentNullException(nameof(window));
+#endif
 
         var windowPlacement = WindowPlacement.GetPlacement(new WindowInteropHelper(window).Handle);
         if (windowPlacement != null)
@@ -88,7 +96,11 @@ public static class WindowExtensions
     /// <returns><see langword="true"/> if the operation is successful, otherwise <see langword="false"/>.</returns>
     public static bool SetPlacement(this Window window, WindowPlacement? windowPlacement)
     {
+#if NET7_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(window);
+#else
+        _ = window ?? throw new ArgumentNullException(nameof(window));
+#endif
 
         if (windowPlacement is null)
         {

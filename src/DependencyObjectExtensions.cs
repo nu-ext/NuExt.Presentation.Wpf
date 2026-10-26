@@ -18,7 +18,11 @@ public static class DependencyObjectExtensions
         /// <exception cref="ArgumentNullException">Thrown when the dependencyObject parameter is null.</exception>
         public T? FindChild<T>() where T : DependencyObject
         {
+#if NET7_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(dependencyObject);
+#else
+            _ = dependencyObject ?? throw new ArgumentNullException(nameof(dependencyObject));
+#endif
 
             int childCount = dependencyObject.GetVisualChildrenCount();
             for (int i = 0; i < childCount; i++)
@@ -49,8 +53,17 @@ public static class DependencyObjectExtensions
         /// <exception cref="ArgumentException">Thrown when the name parameter is empty.</exception>
         public FrameworkElement? FindChildByName(string name)
         {
+#if NET7_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(dependencyObject);
             ArgumentException.ThrowIfNullOrEmpty(name);
+#else
+            _ = dependencyObject ?? throw new ArgumentNullException(nameof(dependencyObject));
+            _ = name ?? throw new ArgumentNullException(nameof(name));
+            if (name.Length == 0)
+            {
+                throw new ArgumentException("Name cannot be empty.", nameof(name));
+            }
+#endif
 
             int childCount = dependencyObject.GetVisualChildrenCount();
 
@@ -77,7 +90,11 @@ public static class DependencyObjectExtensions
         /// <exception cref="ArgumentNullException">Thrown when the dependencyObject parameter is null.</exception>
         public IEnumerable<T> FindChildren<T>() where T : DependencyObject
         {
+#if NET7_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(dependencyObject);
+#else
+            _ = dependencyObject ?? throw new ArgumentNullException(nameof(dependencyObject));
+#endif
 
             int childCount = dependencyObject.GetVisualChildrenCount();
             for (int i = 0; i < childCount; i++)
@@ -105,7 +122,11 @@ public static class DependencyObjectExtensions
         /// <exception cref="ArgumentNullException">Thrown when the dependencyObject parameter is null.</exception>
         public T? FindParent<T>() where T : DependencyObject
         {
+#if NET7_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(dependencyObject);
+#else
+            _ = dependencyObject ?? throw new ArgumentNullException(nameof(dependencyObject));
+#endif
 
             var obj = dependencyObject;
             while (obj != null)
@@ -124,7 +145,11 @@ public static class DependencyObjectExtensions
         /// <returns>The first matching ancestor, or <see langword="null"/> if no match is found.</returns>
         public T? FindAncestor<T>(bool includeSelf = false) where T : DependencyObject
         {
+#if NET7_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(dependencyObject);
+#else
+            _ = dependencyObject ?? throw new ArgumentNullException(nameof(dependencyObject));
+#endif
 
             for (var current = includeSelf ? dependencyObject : dependencyObject.GetVisualParent();
                  current is not null;
@@ -152,7 +177,11 @@ public static class DependencyObjectExtensions
         /// <exception cref="ArgumentNullException">Thrown when the dependencyObject parameter is null.</exception>
         public DependencyObject? GetVisualParent()
         {
+#if NET7_0_OR_GREATER
             ArgumentNullException.ThrowIfNull(dependencyObject);
+#else
+            _ = dependencyObject ?? throw new ArgumentNullException(nameof(dependencyObject));
+#endif
             return dependencyObject is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(dependencyObject) : null;
         }
 

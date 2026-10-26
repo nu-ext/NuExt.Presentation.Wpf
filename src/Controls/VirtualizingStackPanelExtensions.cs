@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Controls;
 
@@ -20,7 +19,11 @@ public static class VirtualizingStackPanelExtensions
     /// </summary>
     public static void BringIntoView(this VirtualizingStackPanel virtualizingPanel, int index)
     {
+#if NET7_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(virtualizingPanel);
+#else
+        _ = virtualizingPanel ?? throw new ArgumentNullException(nameof(virtualizingPanel));
+#endif
 
         var method = s_bringIndexIntoViewMethods.GetOrAdd(virtualizingPanel.GetType(),
             static type => type.GetMethod("BringIndexIntoView", BindingFlags.NonPublic | BindingFlags.Instance)
