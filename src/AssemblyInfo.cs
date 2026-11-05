@@ -10,5 +10,5 @@ using System.Windows.Markup;
                                                 // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: XmlnsPrefix("http://schemas.nuext.minimal/xaml", "minimal")]
+[assembly: XmlnsPrefix("http://schemas.nuext.minimal/xaml", "nx")]
 [assembly: XmlnsDefinition("http://schemas.nuext.minimal/xaml", "Presentation.Wpf.Templating")]
