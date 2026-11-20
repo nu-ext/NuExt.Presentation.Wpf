@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 
@@ -21,7 +23,10 @@ namespace Presentation.Wpf.Diagnostics;
 ///         // Enable tracing for data binding errors
 ///         PresentationTraceSources.Refresh();
 ///         PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Warning;
-///         PresentationTraceSources.DataBindingSource.Listeners.Add(new BindingErrorTraceListener());
+///
+///         // Ignore the transient errors produced by third-party controls while the visual tree is re-templated
+///         PresentationTraceSources.DataBindingSource.Listeners.Add(
+///             new BindingErrorTraceListener("AncestorType='AvalonDock.ToggleDockingManager'"));
 ///     }
 /// }
 /// </code>
@@ -29,25 +34,116 @@ namespace Presentation.Wpf.Diagnostics;
 public sealed class BindingErrorTraceListener : TraceListener
 {
     private readonly StringBuilder _messageBuilder = new();
+    private readonly string[] _ignoredFragments;
 
+#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
     /// <summary>
-    /// Writes a message to the trace listener.
+    /// Initializes a new instance of the <see cref="BindingErrorTraceListener"/> class.
     /// </summary>
-    /// <param name="message">The message to write.</param>
+    /// <param name="ignoredFragments">
+    /// Fragments of messages that must not be reported. A message is ignored when it contains any of the
+    /// specified fragments (ordinal comparison), which is handy for the transient binding errors produced by
+    /// third-party controls while the visual tree is being re-templated. <see langword="null"/>, empty and
+    /// whitespace fragments are skipped, duplicates are removed preserving the first occurrence.
+    /// </param>
+    public BindingErrorTraceListener(params ReadOnlySpan<string> ignoredFragments)
+    {
+        _ignoredFragments = CreateIgnoredFragments(ignoredFragments);
+    }
+#else
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BindingErrorTraceListener"/> class.
+    /// </summary>
+    /// <param name="ignoredFragments">
+    /// Fragments of messages that must not be reported. A message is ignored when it contains any of the
+    /// specified fragments (ordinal comparison), which is handy for the transient binding errors produced by
+    /// third-party controls while the visual tree is being re-templated. <see langword="null"/>, empty and
+    /// whitespace fragments are skipped, duplicates are removed preserving the first occurrence.
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="ignoredFragments"/> is <see langword="null"/>.</exception>
+    public BindingErrorTraceListener(params string[] ignoredFragments)
+    {
+        _ignoredFragments = CreateIgnoredFragments(
+            ignoredFragments ?? throw new ArgumentNullException(nameof(ignoredFragments)));
+    }
+#endif
+
+    /// <inheritdoc/>
     public override void Write(string? message)
     {
         _messageBuilder.Append(message);
     }
 
-    /// <summary>
-    /// Writes a message to the trace listener and displays it in a message box with a warning icon.
-    /// </summary>
-    /// <param name="message">The message to write.</param>
+    /// <inheritdoc/>
     public override void WriteLine(string? message)
     {
         Write(message);
 
-        MessageBox.Show(_messageBuilder.ToString(), "Binding error", MessageBoxButton.OK, MessageBoxImage.Warning);
+        string text = _messageBuilder.ToString();
         _messageBuilder.Clear();
+
+        if (IsIgnored(text))
+        {
+            return;
+        }
+
+        MessageBox.Show(text, "Binding error", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
+#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
+    private static string[] CreateIgnoredFragments(ReadOnlySpan<string> fragments)
+    {
+        if (fragments.IsEmpty)
+        {
+            return [];
+        }
+
+        var result = new List<string>(fragments.Length);
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (string fragment in fragments)
+        {
+            if (!string.IsNullOrWhiteSpace(fragment) && seen.Add(fragment))
+            {
+                result.Add(fragment);
+            }
+        }
+
+        return [.. result];
+    }
+#else
+    private static string[] CreateIgnoredFragments(string[] fragments)
+    {
+        if (fragments.Length == 0)
+        {
+            return [];
+        }
+
+        var result = new List<string>(fragments.Length);
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (string fragment in fragments)
+        {
+            if (!string.IsNullOrWhiteSpace(fragment) && seen.Add(fragment))
+            {
+                result.Add(fragment);
+            }
+        }
+
+        return [.. result];
+    }
+#endif
+
+    private bool IsIgnored(string message)
+    {
+        foreach (string fragment in _ignoredFragments)
+        {
+            if (message.Contains(fragment, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
